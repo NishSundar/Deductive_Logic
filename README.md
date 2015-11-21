@@ -1,4 +1,4 @@
-Program
+# Program
 
 To create a program that can perform deductive logic. Deductive Logic operates on boolean variables (that is variables that can only be 0/1 or false/true) using the OR and AND binary operators instead of Addition and Multiplication. This program will be reading input from a file that specifies some initial boolean variables and then specifies some equations it wants answers to.
 
@@ -13,7 +13,7 @@ Should output
 
 Equation Example is False
 
-Input:
+## Input:
 
 Generally each line of the input will look like
 
@@ -29,7 +29,7 @@ Where
 
 So in the above ~C means taking the 'not' of C (note that there is no space between ~ and C).
 
-Notes:
+## Notes:
 Remeber that the input can be ill-formed. For instance, if the example above was
 
 Variable B not A
