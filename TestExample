@@ -1,7 +1,6 @@
 Variable A True
 Variable B False
-Variable C not A
-Variable D A and B
+Variable C True
 Variable E False
-Variable F (A or B) and E
+Variable D A and B
 Equation Test D
