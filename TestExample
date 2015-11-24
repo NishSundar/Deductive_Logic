@@ -1,6 +1,6 @@
 Variable A True
 Variable B False
-Variable C True
-Variable E False
-Variable D A and B
-Equation Test D
+Variable C not A
+Variable E A and B
+Variable D A or B
+Equation Test D and C
