@@ -126,7 +126,7 @@ def compute(read_string):
 			break	
 		x = equation[i]
 		if x == 'or':
-			equation[i-1:i+2] = [equation[i-1] and equation[i+1]]
+			equation[i-1:i+2] = [equation[i-1] or equation[i+1]]
 	
 	solution = equation[0]
 	print boolean_dict

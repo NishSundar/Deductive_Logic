@@ -6,7 +6,7 @@ def writeTest(str):
     f.close()
 
 def run():
-    p = subprocess.Popen(["python", "DeductiveLogic.py", "TestFile"], stdout=subprocess.PIPE)
+    p = subprocess.Popen(["python", "Parsing.py", "TestFile"], stdout=subprocess.PIPE)
     out, err = p.communicate()
     return out.splitlines()[-1].split()[-1]
 
@@ -35,3 +35,10 @@ Equation Test A and B""")
 runTest("AND-2","False","""Variable A True
 Variable B False
 Equation Test A and B""")
+
+# Can't run properly since the parsing script exits on error.
+runTest("Bad-Variables", "This is not a valid set of variables.", """Variable A True
+Variable B False
+Variable C not D
+Variable D not C
+Equation Test D or C""" )
