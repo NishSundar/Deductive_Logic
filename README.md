@@ -42,3 +42,9 @@ Should output
 Equation Example cannot be solved!
 
 When you are done you have to also provide 5 example input files and expected answers that tests various possible input conditions of this program. I've tried to be brief about the program so clarify with me about the input format and what the program can and can't do. Remember that it's worth writing these various input files first and confirming with me that they are right before writing the program that will compute it!
+
+## To Run:
+You can run the test.py file.
+Or
+You can run the parsing file with a variable and equation file with the following command:
+python Parsing.py [File name]
