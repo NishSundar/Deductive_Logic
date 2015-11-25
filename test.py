@@ -36,6 +36,12 @@ runTest("AND-2","False","""Variable A True
 Variable B False
 Equation Test A and B""")
 
+runTest("Dependent-Variables", "True", """Variable A True
+Variable B False
+Variable C not D
+Variable D A and B
+Equation Test D or C""" )
+
 # Can't run properly since the parsing script exits on error.
 runTest("Bad-Variables", "This is not a valid set of variables.", """Variable A True
 Variable B False
