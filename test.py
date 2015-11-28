@@ -48,3 +48,10 @@ Variable B False
 Variable C not D
 Variable D not C
 Equation Test D or C""" )
+
+# Runs more complex variable values which use brackets
+runTest("With-Brackets", "True", """Variable A True
+Variable B False
+Variable C not A
+Variable D A and ( A or C )
+Equation Test D""" )

@@ -61,6 +61,20 @@ def compute_not(variable_dict):
 					z = y[j+1]
 					if z == True or z == False:
 						y[j:j+2] = [not z]			# This combines the elements into 1
+					elif z == '(':
+						k = len(y)
+						for o in range(j+2, k):
+							if y[o] == ')':
+								d = o
+								break
+						c = y[j+2:d]
+						interim_dict = {}
+						interim_dict['intermediate'] = c
+						interim_dict, intermediate = compute_brackets(variable_dict, interim_dict)
+						if intermediate == True:
+							z = interim_dict['intermediate'][0]
+							n = not z
+							y[j:d+1] = [n]
 	
 	return variable_dict
 
@@ -80,7 +94,21 @@ def compute_and(variable_dict):
 					if (m == True or m == False) and (n == True or n == False):
 						z = m and n
 						y[j-1:j+2] = [z]			# This combines the elements into 1
-	
+					elif (m == True or m == False) and (n == '('):
+						k = len(y)
+						for o in range(j+2, k):
+							if y[o] == ')':
+								d = o
+								break
+						c = y[j+2:d]
+						interim_dict = {}
+						interim_dict['intermediate'] = c
+						interim_dict, intermediate = compute_brackets(variable_dict, interim_dict)
+						if intermediate == True:
+							n = interim_dict['intermediate'][0]
+							z = m and n
+							y[j-1:d+1] = [z]
+					
 	return variable_dict
 
 # This function computes all the 'or' logic statements
@@ -99,8 +127,33 @@ def compute_or(variable_dict):
 					if (m == True or m == False) and (n == True or n == False):
 						z = m or n
 						y[j-1:j+2] = [z]			# This combines the elements into 1
+					elif (m == True or m == False) and (n == '('):
+						k = len(y)
+						for o in range(j+2, k):
+							if y[o] == ')':
+								d = o
+								break
+						c = y[j+2:d]
+						interim_dict = {}
+						interim_dict['intermediate'] = c
+						interim_dict, intermediate = compute_brackets(variable_dict, interim_dict)
+						if intermediate == True:
+							n = interim_dict['intermediate'][0]
+							z = m or n
+							y[j-1:d+1] = [z]
 	
 	return variable_dict
+	
+# To compute the brackets in the values and in the formula
+def compute_brackets(variable_dict, interim_dict):
+	solution, interim_dict = solve(variable_dict, interim_dict, 'intermediate')
+	intermediate = False
+	
+	if solution == [True] or solution == [False]:
+		interim_dict['intermediate'] = solution
+		intermediate = True
+	
+	return interim_dict, intermediate
 
 # This function solves the equation that the user wants.
 def solve(variable_dict, equation_dict, equation_name):
@@ -113,7 +166,9 @@ def solve(variable_dict, equation_dict, equation_name):
 			break
 		x = equation[i]
 		if x in variable_dict.keys():
-			equation[i] = variable_dict[equation[i]][0]
+			y = variable_dict[equation[i]]
+			if y == [True] or y == [False]:
+				equation[i] = y[0]
 	
 	# This loop does the 'not' statements first
 	for i in range(0, l):
@@ -121,7 +176,8 @@ def solve(variable_dict, equation_dict, equation_name):
 			break
 		x = equation[i]
 		if x == 'not':
-			equation[i:i+2] = [not equation[i+1]]			# This combines the elements
+			if equation[i+1] == True or equation[i+1] == False:
+				equation[i:i+2] = [not equation[i+1]]			# This combines the elements
 			
 	# This loop does the 'and' statements next
 	for i in range(0, l):
@@ -129,7 +185,10 @@ def solve(variable_dict, equation_dict, equation_name):
 			break
 		x = equation[i]
 		if x == 'and':
-			equation[i-1:i+2] = [equation[i-1] and equation[i+1]]
+			m = equation[i-1]
+			n = equation[i+1]
+			if (m == True or m == False) and (n == True or n == False):
+				equation[i-1:i+2] = [equation[i-1] and equation[i+1]]
 			# The above line combines the elements used into one element
 	
 	# This loop does the 'or' statements last
@@ -138,10 +197,13 @@ def solve(variable_dict, equation_dict, equation_name):
 			break	
 		x = equation[i]
 		if x == 'or':
-			equation[i-1:i+2] = [equation[i-1] or equation[i+1]]
+			m = equation[i-1]
+			n = equation[i+1]
+			if (m == True or m == False) and (n == True or n == False):
+				equation[i-1:i+2] = [equation[i-1] or equation[i+1]]
 			# The above line combines the elements used into one element
 	
-	solution = equation[0]			# Solution to the formula
+	solution = equation			# Solution to the formula
 	
 	return solution, equation_dict
 
@@ -193,6 +255,6 @@ def main():
 	#print variable_dict
 	#print equation_dict
 	
-	print "The solution to the equation, %s, is: %r" %(equation_name, solution)
+	print "The solution to the equation, %s, is: %r" %(equation_name, solution[0])
 	
 main()
