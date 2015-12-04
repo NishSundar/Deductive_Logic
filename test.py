@@ -55,3 +55,31 @@ Variable B False
 Variable C not A
 Variable D A and ( A or C )
 Equation Test D""" )
+
+# Runs multiple brackets
+runTest("Multiple-Brackets", "True", """Variable A True
+Variable B False
+Variable C not A
+Variable D A and ( C or ( A and A ) )
+Equation Test D""")
+
+# Runs multiple brackets in formula
+runTest("Multiple-Brackets-Formula", "False", """Variable A True
+Variable B False
+Variable C not A
+Variable D not B
+Equation Test A and ( C or ( A and ( not D ) ) )""")
+
+# Runs brackets even if they are the first character in variables
+runTest("First-character-bracket-variables", "False", """Variable A True
+Variable B False
+Variable C not A
+Variable D ( A or B ) and C
+Equation Test D""")
+
+# Runs brackets even if they are the first character in the formula
+runTest("First-character-bracket-formula", "True", """Variable A True
+Variable B False
+Variable C not A
+Variable D not B
+Equation Test ( A or C ) and A""")

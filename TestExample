@@ -1,5 +1,5 @@
 Variable A True
 Variable B False
-Variable C D and ( A and B )
-Variable D not ( B or A )
-Equation Test C
+Variable C not A
+Variable D not B
+Equation Test ( A or C ) and A

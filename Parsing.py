@@ -61,10 +61,16 @@ def compute_not(variable_dict):
 					z = y[j+1]
 					if z == True or z == False:
 						y[j:j+2] = [not z]			# This combines the elements into 1
-					elif z == '(':
+					elif z == '(':			# Computes what is in the brackets
 						k = len(y)
-						for o in range(j+2, k):
+						q = 1			# Number of open brackets
+						w = 0			# Number of close brackets
+						for o in range(j+2, k):			# Finds out what is in the brackets
+							if y[o] == '(':
+								q = q + 1
 							if y[o] == ')':
+								w = w + 1
+							if q == w:
 								d = o
 								break
 						c = y[j+2:d]
@@ -94,10 +100,16 @@ def compute_and(variable_dict):
 					if (m == True or m == False) and (n == True or n == False):
 						z = m and n
 						y[j-1:j+2] = [z]			# This combines the elements into 1
-					elif (m == True or m == False) and (n == '('):
+					elif (m == True or m == False) and (n == '('):			# Computes brackets
 						k = len(y)
-						for o in range(j+2, k):
+						q = 1			# Number of open brackets
+						w = 0			# Number of close brackets
+						for o in range(j+2, k):			# Finds out what is in the brackets
+							if y[o] == '(':
+								q = q + 1
 							if y[o] == ')':
+								w = w + 1
+							if q == w:
 								d = o
 								break
 						c = y[j+2:d]
@@ -127,10 +139,16 @@ def compute_or(variable_dict):
 					if (m == True or m == False) and (n == True or n == False):
 						z = m or n
 						y[j-1:j+2] = [z]			# This combines the elements into 1
-					elif (m == True or m == False) and (n == '('):
+					elif (m == True or m == False) and (n == '('):			# Computes brackets
 						k = len(y)
-						for o in range(j+2, k):
+						q = 1			# Number of open brackets
+						w = 0			# Number of close brackets
+						for o in range(j+2, k):			# Finds out what is in the brackets
+							if y[o] == '(':
+								q = q + 1
 							if y[o] == ')':
+								w = w + 1
+							if q == w:
 								d = o
 								break
 						c = y[j+2:d]
@@ -144,7 +162,9 @@ def compute_or(variable_dict):
 	
 	return variable_dict
 	
-# To compute the brackets in the values and in the formula
+# To compute the brackets in the values
+# Add to this function: the ability to recurr this function so that it can compute brackets inside
+# brackets. This way we don't need to do a separate loop inside each logic computing function
 def compute_brackets(variable_dict, interim_dict):
 	solution, interim_dict = solve(variable_dict, interim_dict, 'intermediate')
 	intermediate = False
@@ -154,8 +174,39 @@ def compute_brackets(variable_dict, interim_dict):
 		intermediate = True
 	
 	return interim_dict, intermediate
+	
+def compute_brackets_2(variable_dict):
+	for i in variable_dict.keys():
+		y = variable_dict[i]
+		l = len(y)
+		if y[0] == '(':
+			k = len(y)
+			q = 1			# Number of open brackets
+			w = 0			# Number of close brackets
+			for o in range(1, k):			# Finds out what is in the brackets
+				if y[o] == '(':
+					q = q + 1
+				if y[o] == ')':
+					w = w + 1
+				if q == w:
+					d = o
+					break
+			c = y[1:d]
+			interim_dict = {}
+			interim_dict['intermediate'] = c
+			interim_dict, intermediate = compute_brackets(variable_dict, interim_dict)
+			if intermediate == True:
+				z = interim_dict['intermediate'][0]
+				y[0:d+1] = [z]
+		
+	return variable_dict
 
 # This function solves the equation that the user wants.
+# Change the loops in this function in order to be able to do brackets in the formula. Just be
+# able to do at least one bracket in this function because then any number of brackets inside
+# brackets can be done since the compute_brackets will be used to solve the first bracket, and
+# the compute_bracket function will again call the solve function recurring it for multiple
+# brackets.
 def solve(variable_dict, equation_dict, equation_name):
 	equation = equation_dict[equation_name]
 	l = len(equation)
@@ -169,6 +220,29 @@ def solve(variable_dict, equation_dict, equation_name):
 			y = variable_dict[equation[i]]
 			if y == [True] or y == [False]:
 				equation[i] = y[0]
+				
+	for i in range(0, l):
+		if i >= len(equation):
+			break
+		if equation[0] == '(':
+			k = len(equation)
+			q = 1			# Number of open brackets
+			w = 0			# Number of close brackets
+			for o in range(1, k):			# Finds out what is in the brackets
+				if equation[o] == '(':
+					q = q + 1
+				if equation[o] == ')':
+					w = w + 1
+				if q == w:
+					d = o
+					break
+			c = equation[1:d]
+			interim_dict = {}
+			interim_dict['intermediate'] = c
+			interim_dict, intermediate = compute_brackets(variable_dict, interim_dict)
+			if intermediate == True:
+				z = interim_dict['intermediate'][0]
+				equation[0:d+1] = [z]
 	
 	# This loop does the 'not' statements first
 	for i in range(0, l):
@@ -178,6 +252,28 @@ def solve(variable_dict, equation_dict, equation_name):
 		if x == 'not':
 			if equation[i+1] == True or equation[i+1] == False:
 				equation[i:i+2] = [not equation[i+1]]			# This combines the elements
+			elif equation[i+1] == '(':			# Computes what is in the brackets
+						k = len(equation)
+						# change the following loop so that if there are multiple brackets, it can
+						# correctly determine the right closing bracket
+						for o in range(i+2, k):			# Finds out what is in the brackets
+							q = 1			# Number of open brackets
+							w = 0			# Number of close brackets
+							if equation[o] == '(':
+								q = q + 1
+							if equation[o] == ')':
+								w = w + 1
+							if q == w:
+								d = o
+								break
+						c = equation[i+2:d]
+						interim_dict = {}
+						interim_dict['intermediate'] = c
+						interim_dict, intermediate = compute_brackets(variable_dict, interim_dict)
+						if intermediate == True:
+							z = interim_dict['intermediate'][0]
+							n = not z
+							equation[i:d+1] = [n]
 			
 	# This loop does the 'and' statements next
 	for i in range(0, l):
@@ -190,6 +286,26 @@ def solve(variable_dict, equation_dict, equation_name):
 			if (m == True or m == False) and (n == True or n == False):
 				equation[i-1:i+2] = [equation[i-1] and equation[i+1]]
 			# The above line combines the elements used into one element
+			elif (m == True or m == False) and (n == '('):			# Computes brackets
+						k = len(equation)
+						q = 1			# Number of open brackets
+						w = 0			# Number of close brackets
+						for o in range(i+2, k):			# Finds out what is in the brackets
+							if equation[o] == '(':
+								q = q + 1
+							if equation[o] == ')':
+								w = w + 1
+							if q == w:
+								d = o
+								break
+						c = equation[i+2:d]
+						interim_dict = {}
+						interim_dict['intermediate'] = c
+						interim_dict, intermediate = compute_brackets(variable_dict, interim_dict)
+						if intermediate == True:
+							n = interim_dict['intermediate'][0]
+							z = m and n
+							equation[i-1:d+1] = [z]
 	
 	# This loop does the 'or' statements last
 	for i in range(0, l):
@@ -201,6 +317,26 @@ def solve(variable_dict, equation_dict, equation_name):
 			n = equation[i+1]
 			if (m == True or m == False) and (n == True or n == False):
 				equation[i-1:i+2] = [equation[i-1] or equation[i+1]]
+			elif (m == True or m == False) and (n == '('):			# Computes brackets
+						k = len(equation)
+						q = 1			# Number of open brackets
+						w = 0			# Number of close brackets
+						for o in range(i+2, k):			# Finds out what is in the brackets
+							if equation[o] == '(':
+								q = q + 1
+							if equation[o] == ')':
+								w = w + 1
+							if q == w:
+								d = o
+								break
+						c = equation[i+2:d]
+						interim_dict = {}
+						interim_dict['intermediate'] = c
+						interim_dict, intermediate = compute_brackets(variable_dict, interim_dict)
+						if intermediate == True:
+							n = interim_dict['intermediate'][0]
+							z = m or n
+							equation[i-1:d+1] = [z]
 			# The above line combines the elements used into one element
 	
 	solution = equation			# Solution to the formula
@@ -238,6 +374,7 @@ def main():
 		chk_value, check2 = check_dict(variable_dict)
 		
 		variable_dict = insert_tf(variable_dict)
+		variable_dict = compute_brackets_2(variable_dict)
 		variable_dict = compute_not(variable_dict)
 		variable_dict = compute_and(variable_dict)
 		variable_dict = compute_or(variable_dict)
