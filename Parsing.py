@@ -26,6 +26,16 @@ def store(read_string):
 			variable_dict[i] = [True]
 		elif variable_dict[i] == ['False']:
 			variable_dict[i] = [False]
+			
+	for i in variable_dict.keys():
+		y = variable_dict[i]
+		l = len(y)
+		if y != [True] or y != [False]:
+			for j in range(0, l):
+				if y[j] == 'False':
+					y[j] = False
+				elif y[j] == 'True':
+					y[j] = True
 	
 	read.close()			# Closes the file
 	return variable_dict, equation_dict, equation_name
