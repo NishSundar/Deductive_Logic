@@ -1,5 +1,2 @@
-Variable A ( ( ( ( True or ( True and False ) ) or ( True or True ) ) and ( True and ( True or ( False and True ) ) ) ) or False )
-Variable B False
-Variable C not A
-Variable D not B
-Equation Test A
+Variable A True or False or True
+Equation Test A and False or False or True

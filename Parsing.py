@@ -65,6 +65,7 @@ def compute_not(variable_dict):
 		if y != [True] or y != [False]:
 			for j in range(0, l):
 				if j >= len(y):
+					variable_dict = compute_not(variable_dict)			# Computes multiple nots'
 					break
 				x = y[j]
 				if x == 'not':
@@ -102,6 +103,7 @@ def compute_and(variable_dict):
 		if y != [True] or y != [False]:
 			for j in range(0, l):
 				if j >= len(y):
+					variable_dict = compute_and(variable_dict)			# Computes multiple ands'
 					break
 				x = y[j]
 				if x == 'and':
@@ -141,6 +143,7 @@ def compute_or(variable_dict):
 		if y != [True] or y != [False]:
 			for j in range(0, l):
 				if j >= len(y):
+					variable_dict = compute_or(variable_dict)			# Computes multiple ors'
 					break
 				x = y[j]
 				if x == 'or':
@@ -220,6 +223,7 @@ def compute_brackets_2(variable_dict):
 def solve(variable_dict, equation_dict, equation_name):
 	equation = equation_dict[equation_name]
 	l = len(equation)
+	interim_eq = {}
 	
 	# This loop puts in the boolean values for all the variables in the formula
 	for i in range(0, l):
@@ -230,6 +234,16 @@ def solve(variable_dict, equation_dict, equation_name):
 			y = variable_dict[equation[i]]
 			if y == [True] or y == [False]:
 				equation[i] = y[0]
+	
+	# Changes True, False strings into boolean values
+	for i in range(0, l):
+		if i >= len(equation):
+			break
+		x = equation
+		if x[i] == 'False':
+			x[i] = False
+		elif x[i] == 'True':
+			x[i] = True
 				
 	for i in range(0, l):
 		if i >= len(equation):
@@ -254,9 +268,12 @@ def solve(variable_dict, equation_dict, equation_name):
 				z = interim_dict['intermediate'][0]
 				equation[0:d+1] = [z]
 	
+	l = len(equation)
 	# This loop does the 'not' statements first
 	for i in range(0, l):
+		interim_eq['eq'] = equation
 		if i >= len(equation):
+			equation, interim_eq = solve(variable_dict, interim_eq, 'eq')
 			break
 		x = equation[i]
 		if x == 'not':
@@ -283,11 +300,14 @@ def solve(variable_dict, equation_dict, equation_name):
 						if intermediate == True:
 							z = interim_dict['intermediate'][0]
 							n = not z
-							equation[i:d+1] = [n]
-			
+							equation[i:d+1] = [n]	
+	
+	l = len(equation)
 	# This loop does the 'and' statements next
 	for i in range(0, l):
+		interim_eq['eq'] = equation
 		if i >= len(equation):
+			equation, interim_eq = solve(variable_dict, interim_eq, 'eq')
 			break
 		x = equation[i]
 		if x == 'and':
@@ -317,9 +337,12 @@ def solve(variable_dict, equation_dict, equation_name):
 							z = m and n
 							equation[i-1:d+1] = [z]
 	
+	l = len(equation)
 	# This loop does the 'or' statements last
 	for i in range(0, l):
+		interim_eq['eq'] = equation
 		if i >= len(equation):
+			equation, interim_eq = solve(variable_dict, interim_eq, 'eq')
 			break	
 		x = equation[i]
 		if x == 'or':
@@ -390,17 +413,18 @@ def main():
 		variable_dict = compute_or(variable_dict)
 		
 		chk_value, check1 = check_dict(variable_dict)
-		
+
 		# This if statement makes a check to see if the variables are valid
 		if check1 == check2:
 			print "This is not a valid set of variables."
+			print check2, check1
 			exit(-1)
 		
 	# Solves the equation
 	solution, equation_dict = solve(variable_dict, equation_dict, equation_name)
 	
 	#print variable_dict
-	#print equation_dict
+	print equation_dict
 	
 	print "The solution to the equation, %s, is: %r" %(equation_name, solution[0])
 	
