@@ -424,7 +424,7 @@ def main():
 	solution, equation_dict = solve(variable_dict, equation_dict, equation_name)
 	
 	#print variable_dict
-	print equation_dict
+	#print equation_dict
 	
 	print "The solution to the equation, %s, is: %r" %(equation_name, solution[0])
 	
